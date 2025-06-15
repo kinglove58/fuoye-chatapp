@@ -15,7 +15,6 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
     
-    // checkMatric(matric)
     const locateMatric = allowedMatric.find((item) => item === matric )
     
     if (!locateMatric) {
@@ -40,6 +39,7 @@ export const signup = async (req, res) => {
       email,
       matric,
       password: hashedPassword,
+      profilePic: ""
     });
 
     if (newUser) {
@@ -63,13 +63,6 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-// export const checkMatric = (matric) => {
-//   const locateMatric = allowedMatric.find(matric)
-//   if (!locateMatric) {
-//     return res.status(400).json({ message: "Matric not allowed" });
-//   }
-// }
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -113,26 +106,52 @@ export const logout = (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { profilePic } = req.body;
-    const userId = req.user._id;
-
-    if (!profilePic) {
-      return res.status(400).json({ message: "Profile pic is required" });
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const uploadResponse = await cloudinary.uploader.upload(profilePic);
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { profilePic: uploadResponse.secure_url },
-      { new: true }
-    );
+    const { fullName, email, profilePic } = req.body;
+    const userId = req.user._id;
 
-    res.status(200).json(updatedUser);
+    let updatedFields = {};
+
+    // Check if new email is already used by another user
+    if (email) {
+      const existingUser = await User.findOne({ email, _id: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already in use by another account" });
+      }
+      updatedFields.email = email;
+    }
+
+    if (fullName) updatedFields.fullName = fullName;
+
+    if (profilePic) {
+      try {
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+        updatedFields.profilePic = uploadResponse.secure_url;
+      } catch (err) {
+        return res.status(400).json({ message: "Image upload failed" });
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, { new: true });
+
+    res.status(200).json({
+      _id: updatedUser._id,
+      fullName: updatedUser.fullName,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      matric: updatedUser.matric,
+      profilePic: updatedUser.profilePic,
+    });
   } catch (error) {
-    console.log("error in update profile:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in updateProfile controller:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
 
 export const checkAuth = (req, res) => {
   try {

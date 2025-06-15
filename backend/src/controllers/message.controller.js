@@ -70,34 +70,34 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-export const getActiveUsers = async (req, res) => {
-  try {
-    const loggedInUserId = req.user._id;
+// export const getActiveUsers = async (req, res) => {
+//   try {
+//     const loggedInUserId = req.user._id;
 
-    // Find all messages where the logged-in user is either the sender or receiver
-    const messages = await Message.find({
-      $or: [{ senderId: loggedInUserId }, { receiverId: loggedInUserId }],
-    }).select("senderId receiverId");
+//     // Find all messages where the logged-in user is either the sender or receiver
+//     const messages = await Message.find({
+//       $or: [{ senderId: loggedInUserId }, { receiverId: loggedInUserId }],
+//     }).select("senderId receiverId");
 
-    // Extract unique user IDs from the messages
-    const userIds = new Set();
-    messages.forEach((message) => {
-      if (message.senderId.toString() !== loggedInUserId.toString()) {
-        userIds.add(message.senderId.toString());
-      }
-      if (message.receiverId.toString() !== loggedInUserId.toString()) {
-        userIds.add(message.receiverId.toString());
-      }
-    });
+//     // Extract unique user IDs from the messages
+//     const userIds = new Set();
+//     messages.forEach((message) => {
+//       if (message.senderId.toString() !== loggedInUserId.toString()) {
+//         userIds.add(message.senderId.toString());
+//       }
+//       if (message.receiverId.toString() !== loggedInUserId.toString()) {
+//         userIds.add(message.receiverId.toString());
+//       }
+//     });
 
-    // Fetch user details for the extracted user IDs
-    const activeUsers = await User.find({
-      _id: { $in: Array.from(userIds) },
-    }).select("-password");
+//     // Fetch user details for the extracted user IDs
+//     const activeUsers = await User.find({
+//       _id: { $in: Array.from(userIds) },
+//     }).select("-password");
 
-    res.status(200).json(activeUsers);
-  } catch (error) {
-    console.error("Error in getActiveUsers: ", error.message);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
+//     res.status(200).json(activeUsers);
+//   } catch (error) {
+//     console.error("Error in getActiveUsers: ", error.message);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };

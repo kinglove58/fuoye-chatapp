@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { LogOut, MessageSquare, Search, Settings, User } from "lucide-react";
 import { useState } from "react";
@@ -11,14 +11,13 @@ const Navbar = () => {
 
   const { searchValue, setSearchValue } = useChatStore();
 
+  const navigate = useNavigate()
+
   const handleSearch = (e) => {
     e.preventDefault();
-    // if (!userInput.trim()) {
-    //   console.warn("Search input is empty");
-    //   return;
-    // }
     setSearchValue(userInput);
     setUserInput("");
+    navigate("/")
     console.log("Search Working");
   };
 

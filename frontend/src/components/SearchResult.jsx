@@ -6,6 +6,7 @@ import { useEffect } from "react";
 const SearchResult = () => {
   const {
     getUsers,
+    getSidebarUsers,
     searchValue,
     setSearchValue,
     users,
@@ -26,7 +27,7 @@ const SearchResult = () => {
     : [];
 
   return (
-    <div className="">
+    <div className="z-50">
       {search_result.length === 0 && (
         <div className="text-center text-zinc-500 py-4">
           No matching users found
@@ -37,7 +38,7 @@ const SearchResult = () => {
         {search_result.map((user) => (
           <button
             key={user._id}
-            onClick={() => setSelectedUser(user)}
+            onClick={() => {setSelectedUser(user); getSidebarUsers(user)}}
             className={`
               w-full p-3 flex items-center gap-3
               hover:bg-base-300 transition-colors

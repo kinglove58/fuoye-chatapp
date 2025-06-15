@@ -10,6 +10,7 @@ export const useChatStore = create((set, get) => ({
   isUsersLoading: false,
   isMessagesLoading: false,
   searchValue: "",
+  sidebarUsers: [],
 
   getUsers: async () => {
     set({ isUsersLoading: true });
@@ -22,19 +23,7 @@ export const useChatStore = create((set, get) => ({
       set({ isUsersLoading: false });
     }
   },
-
-  getActiveUsers: async () => {
-    set({ isUsersLoading: true });
-    try {
-      const res = await axiosInstance.get("/messages/active-users");
-      set({ users: res.data });
-    } catch (error) {
-      toast.error(error.response.data.message);
-    } finally {
-      set({ isUsersLoading: false });
-    }
-  },
-
+  
   getMessages: async (userId) => {
     set({ isMessagesLoading: true });
     try {
@@ -84,4 +73,14 @@ export const useChatStore = create((set, get) => ({
   setSelectedUser: (selectedUser) => set({ selectedUser }),
 
   setSearchValue: (searchValue) => set({ searchValue }),
+
+    getSidebarUsers: (user) => {
+        set((state) => {
+            const exists = state.sidebarUsers.some((u) => u._id === user._id);
+            if (exists) return {}; // No update needed
+            return { sidebarUsers: [...state.sidebarUsers, user] };
+        });
+    },
+
+//   setSidebarUsers: (item) => set(sidebarUsers.push(item))
 }));

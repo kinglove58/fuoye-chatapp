@@ -5,6 +5,18 @@ import { Camera, Mail, User } from "lucide-react";
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
+  const [fullName, setFullName] = useState(authUser?.fullName || "");
+const [email, setEmail] = useState(authUser?.email || "");
+
+const handleUpdateProfile = async (e) => {
+  e.preventDefault();
+
+  const updatePayload = { fullName, email };
+  if (selectedImg) updatePayload.profilePic = selectedImg;
+
+  await updateProfile(updatePayload);
+};
+
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -65,23 +77,38 @@ const ProfilePage = () => {
             </p>
           </div>
 
-          <div className="space-y-6">
+          <form onSubmit={handleUpdateProfile} className="space-y-6">
             <div className="space-y-1.5">
-              <div className="text-sm text-zinc-400 flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Full Name
-              </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.fullName}</p>
+                <label className="text-sm text-zinc-400">Full Name</label>
+                <input
+                    type="text"
+                    className="w-full px-4 py-2.5 bg-base-200 rounded-lg border"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                />
             </div>
 
             <div className="space-y-1.5">
-              <div className="text-sm text-zinc-400 flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                Email Address
-              </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.email}</p>
+                <label className="text-sm text-zinc-400">Email</label>
+                <input
+                    type="email"
+                    className="w-full px-4 py-2.5 bg-base-200 rounded-lg border"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
             </div>
-          </div>
+
+            <button
+                type="submit"
+                disabled={isUpdatingProfile}
+                className={`w-full py-2 px-4 bg-primary text-white rounded-lg hover:opacity-90 transition ${
+                isUpdatingProfile ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+            >
+                {isUpdatingProfile ? "Updating..." : "Update Profile"}
+            </button>
+        </form>
+
 
           <div className="mt-6 bg-base-300 rounded-xl p-6">
             <h2 className="text-lg font-medium  mb-4">Account Information</h2>

@@ -6,8 +6,8 @@ import axios from "axios";
 
 const BASE_URL =
   import.meta.env.MODE === "development"
-    ? "https://fuoyechatapp.onrender.com"
-    : "/";
+    ? "http://localhost:5001"
+    : "https://fuoyechatapp.onrender.com";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,

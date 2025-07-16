@@ -118,7 +118,7 @@ const SignUpPage = () => {
                 <input
                   type="text"
                   className={`input input-bordered w-full pl-10`}
-                  placeholder="CPE/19/0001"
+                  placeholder="CSC/19/0001"
                   value={formData.matric}
                   onChange={(e) =>
                     setFormData({ ...formData, matric: e.target.value })

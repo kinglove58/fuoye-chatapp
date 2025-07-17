@@ -28,7 +28,7 @@ app.use(cookieParser());
 // );
 app.use(
   cors({
-    origin: "https://fuoye-chatapp-frontend.onrender.com/",
+    origin: "https://fuoye-chatapp-frontend.onrender.com",
     credentials: true,
   })
 );

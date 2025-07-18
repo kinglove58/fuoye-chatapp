@@ -28,7 +28,10 @@ app.use(cookieParser());
 // );
 app.use(
   cors({
-    origin: "https://fuoye-chatapp-frontend.onrender.com",
+    origin: [
+      "http://localhost:5173",
+      "https://fuoye-chatapp-frontend.onrender.com",
+    ],
     credentials: true,
   })
 );
